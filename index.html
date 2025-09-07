@@ -144,22 +144,127 @@
                 </div>
             </div>
         </section>
+<!-- Gallery Section -->
+<section id="gallery" class="py-20 bg-white">
+  <div class="container mx-auto px-6">
+    <h2 class="text-4xl section-title text-center mb-12">Our Gallery</h2>
 
-        <!-- Gallery Section -->
-        <section id="gallery" class="py-20 bg-white">
-            <div class="container mx-auto px-6">
-                <h2 class="text-4xl section-title text-center mb-12">Our Gallery</h2>
-                <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    <!-- Images will be populated here -->
-                </div>
-            </div>
-        </section>
-        
-        <!-- Lightbox container -->
-        <div id="lightbox" class="lightbox">
-            <span id="lightbox-close" class="lightbox-close">&times;</span>
-            <img id="lightbox-img" class="lightbox-content" src="">
-        </div>
+    <!-- Grid -->
+    <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      <!-- JS will populate images here -->
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox / Carousel Modal -->
+<div id="lightbox" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center hidden overflow-hidden">
+  <button id="lb-prev" class="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-3xl p-3 hover:bg-white/20 rounded-full transition">‹</button>
+  <img id="lightbox-img" class="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-lg" src="" alt="">
+  <div id="lightbox-caption" class="absolute bottom-10 text-white text-center w-full text-lg"></div>
+  <button id="lb-next" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-3xl p-3 hover:bg-white/20 rounded-full transition">›</button>
+  <span id="lightbox-close" class="absolute top-4 right-6 text-white text-3xl cursor-pointer">×</span>
+</div>
+
+
+<script>
+const galleryImages = [
+  { src: 'gallery/photo1.webp', caption: 'Act done by students on Earth Day' },
+  { src: 'gallery/photo2.webp', caption: 'Act done by students on Earth Day' },
+  { src: 'gallery/Yoga_Activity.webp', caption: 'Yoga Activity' },
+  { src: 'gallery/Yoga_Activity2.webp', caption: 'Yoga Activity' },
+  { src: 'gallery/photo5.webp', caption: 'Industrial Visit' },
+  { src: 'gallery/photo6.webp', caption: 'Industrial Visit' },
+  { src: 'gallery/photo7.webp', caption: 'Holi Celebration' },
+  { src: 'gallery/photo8.webp', caption: 'Holi Celebration' },
+  { src: 'gallery/photo9.webp', caption: 'Holi Celebration' },
+  { src: 'gallery/photo26.webp', caption: 'Holi Celebration' },
+  { src: 'gallery/photo10.webp', caption: 'Gold medalist students in Science Olympiad' },
+  { src: 'gallery/photo11.webp', caption: 'Gold medalist students in Science Olympiad' },
+  { src: 'gallery/photo12.webp', caption: 'Gold medalist students in Science Olympiad' },
+  { src: 'gallery/photo13.HEIC', caption: 'Industrial trip to Sports Factory ' },
+  { src: 'gallery/photo14.HEIC', caption: 'Industrial trip to Sports Factory ' },
+  { src: 'gallery/photo15.HEIC', caption: 'Industrial trip to Sports Factory ' },
+  { src: 'gallery/photo16.HEIC', caption: 'Industrial trip to Sports Factory ' },
+  { src: 'gallery/photo3.webp', caption: 'Student war-preparedness safety drill' },
+  { src: 'gallery/photo4.webp', caption: 'Student war-preparedness safety drill' },
+  { src: 'gallery/photo17.webp', caption: 'Rakhi Celebration' },
+  { src: 'gallery/photo18.webp', caption: 'Rakhi Celebration' },
+  { src: 'gallery/photo19.webp', caption: 'Rakhi Celebration' },
+  { src: 'gallery/photo20.webp', caption: 'Rakhi Celebration' },
+  { src: 'gallery/photo21.webp', caption: 'Rakhi Celebration' },
+  { src: 'gallery/photo22.webp', caption: 'Rakhi Celebration' },
+  { src: 'gallery/photo23.webp', caption: 'Glimpse of Republic Day Celebration' },
+  { src: 'gallery/photo24.webp', caption: 'Glimpse of Republic Day Celebration' },
+  { src: 'gallery/photo25.webp', caption: 'Glimpse of Republic Day Celebration' }
+  
+];
+
+
+const grid = document.getElementById('gallery-grid');
+const lightbox = document.getElementById('lightbox');
+const lbImg = document.getElementById('lightbox-img');
+const lbCaption = document.getElementById('lightbox-caption');
+const lbClose = document.getElementById('lightbox-close');
+const lbPrev = document.getElementById('lb-prev');
+const lbNext = document.getElementById('lb-next');
+
+let currentIndex = 0;
+
+// Populate grid with uniform cards
+galleryImages.forEach((img, index) => {
+  const div = document.createElement('div');
+  div.className = "overflow-hidden rounded-lg cursor-pointer group bg-gray-100 shadow hover:shadow-lg transition transform hover:scale-105";
+  div.innerHTML = `
+    <img src="${img.src}" 
+         class="w-full h-48 object-cover rounded-lg"
+         alt="${img.caption}">
+    <div class="absolute bottom-0 left-0 w-full bg-black/40 text-white text-center py-1 opacity-0 group-hover:opacity-100 transition">${img.caption}</div>
+  `;
+  div.addEventListener('click', () => openLightbox(index));
+  grid.appendChild(div);
+});
+
+// Open lightbox
+function openLightbox(index) {
+  currentIndex = index;
+  updateLightbox();
+  lightbox.classList.remove('hidden');
+}
+
+// Close lightbox
+lbClose.addEventListener('click', () => lightbox.classList.add('hidden'));
+lightbox.addEventListener('click', (e) => { if(e.target === lightbox) lightbox.classList.add('hidden'); });
+
+// Previous / Next buttons
+lbPrev.addEventListener('click', () => slide(-1));
+lbNext.addEventListener('click', () => slide(1));
+
+// Slide function
+function slide(direction) {
+  currentIndex += direction;
+  if(currentIndex < 0) currentIndex = galleryImages.length - 1;
+  if(currentIndex >= galleryImages.length) currentIndex = 0;
+  updateLightbox();
+}
+
+// Update lightbox content
+function updateLightbox() {
+  lbImg.src = galleryImages[currentIndex].src;
+  lbCaption.textContent = galleryImages[currentIndex].caption;
+}
+
+// Swipe support for mobile
+let startX = 0;
+lbImg.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+lbImg.addEventListener('touchend', e => {
+  let endX = e.changedTouches[0].clientX;
+  if(endX - startX > 50) slide(-1);   // swipe right
+  if(startX - endX > 50) slide(1);    // swipe left
+});
+</script>
+
+
+
 
         <!-- Alumni Section -->
         <section id="alumni" class="py-20">
