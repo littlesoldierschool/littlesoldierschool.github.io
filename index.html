@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Little Soldier Jr. High School | Meerut</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* Custom styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9FA;
+        }
+        .hero-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://placehold.co/1920x1080/a2d2ff/ffffff?text=School+Campus');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .section-title {
+            font-weight: 800;
+            color: #1A3A6D;
+        }
+        .nav-link {
+            @apply px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors duration-300;
+        }
+        .card {
+            @apply bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300;
+        }
+        .btn-primary {
+            @apply bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-transform transform hover:scale-105 duration-300;
+        }
+        /* Lightbox styles */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+        }
+        .lightbox-content {
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .lightbox-close:hover {
+            color: #bbb;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#home" class="text-2xl font-bold text-blue-700">Little Soldier Jr. High</a>
+            <div class="hidden md:flex space-x-2">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#mission" class="nav-link">About Us</a>
+                <a href="#gallery" class="nav-link">Gallery</a>
+                <a href="#alumni" class="nav-link">Alumni</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden">
+                <i class="fas fa-bars text-2xl text-blue-700"></i>
+            </button>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+            <a href="#home" class="block py-2 nav-link text-center">Home</a>
+            <a href="#mission" class="block py-2 nav-link text-center">About Us</a>
+            <a href="#gallery" class="block py-2 nav-link text-center">Gallery</a>
+            <a href="#alumni" class="block py-2 nav-link text-center">Alumni</a>
+            <a href="#contact" class="block py-2 nav-link text-center">Contact</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="hero-bg text-white min-h-[80vh] flex items-center">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-5xl md:text-7xl font-extrabold mb-4 leading-tight" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.7);">Little Soldier Jr. High School</h1>
+                <p class="text-lg md:text-xl mb-2"><i class="fas fa-map-marker-alt mr-2"></i>321/6 Jagriti Vihar, Meerut</p>
+                <p class="text-lg md:text-xl mb-8"><i class="fas fa-phone-alt mr-2"></i>0121-2766549</p>
+                <a href="#contact" class="btn-primary">Get In Touch</a>
+            </div>
+        </section>
+
+        <!-- Mission Section -->
+        <section id="mission" class="py-20 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl section-title mb-6">Our Mission</h2>
+                <p class="max-w-3xl mx-auto text-xl text-gray-600 leading-relaxed italic">
+                    "Our mission is to facilitate and to teach the student to reach the highest standard of efficiency, excellence, trust, and commitment."
+                </p>
+            </div>
+        </section>
+
+        <!-- Classes Section -->
+        <section id="classes" class="py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl section-title text-center mb-12">From Nursery to Class VIII</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="card text-center">
+                        <i class="fas fa-child text-5xl text-blue-500 mb-4"></i>
+                        <h3 class="text-2xl font-bold mb-2">Nursery & KG</h3>
+                        <p class="text-gray-600">Building a strong foundation with play-based learning and creativity.</p>
+                    </div>
+                    <div class="card text-center">
+                        <i class="fas fa-book-open text-5xl text-blue-500 mb-4"></i>
+                        <h3 class="text-2xl font-bold mb-2">Primary Classes (I-V)</h3>
+                        <p class="text-gray-600">Fostering curiosity and developing core academic skills in a supportive environment.</p>
+                    </div>
+                    <div class="card text-center">
+                        <i class="fas fa-graduation-cap text-5xl text-blue-500 mb-4"></i>
+                        <h3 class="text-2xl font-bold mb-2">Junior High (VI-VIII)</h3>
+                        <p class="text-gray-600">Preparing students for future challenges with a comprehensive and advanced curriculum.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section id="gallery" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl section-title text-center mb-12">Our Gallery</h2>
+                <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <!-- Images will be populated here -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Lightbox container -->
+        <div id="lightbox" class="lightbox">
+            <span id="lightbox-close" class="lightbox-close">&times;</span>
+            <img id="lightbox-img" class="lightbox-content" src="">
+        </div>
+
+        <!-- Alumni Section -->
+        <section id="alumni" class="py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl section-title text-center mb-12">Alumni Network</h2>
+                <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8">
+                    <div class="flex border-b mb-6">
+                        <button id="register-tab" class="flex-1 py-3 font-bold text-lg border-b-4 border-blue-600 text-blue-600">Register</button>
+                        <button id="reconnect-tab" class="flex-1 py-3 font-bold text-lg text-gray-500">Reconnect</button>
+                    </div>
+
+                    <!-- Registration Form -->
+                    <div id="register-view">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Join the Alumni Network</h3>
+                        <form id="alumni-form">
+                            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                                <input type="text" id="alumni-name" placeholder="Full Name" class="w-full p-3 border rounded-lg" required>
+                                <input type="number" id="alumni-batch" placeholder="Batch Year (e.g., 2015)" class="w-full p-3 border rounded-lg" required>
+                                <input type="email" id="alumni-email" placeholder="Email Address" class="w-full p-3 border rounded-lg" required>
+                                <input type="tel" id="alumni-phone" placeholder="Phone Number" class="w-full p-3 border rounded-lg" required>
+                            </div>
+                            <button type="submit" class="w-full btn-primary">Register Now</button>
+                        </form>
+                        <div id="form-message" class="mt-4 text-center"></div>
+                    </div>
+                    
+                    <!-- Reconnect View -->
+                    <div id="reconnect-view" class="hidden">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6">Registered Alumni Members</h3>
+                        <div id="alumni-list" class="space-y-4 max-h-96 overflow-y-auto pr-4">
+                            <!-- Alumni data will be populated here -->
+                            <p class="text-center text-gray-500">Loading alumni members...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl section-title text-center mb-12">Contact Us</h2>
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div class="card">
+                        <h3 class="text-2xl font-bold mb-4">Get in Touch</h3>
+                        <p class="mb-4 text-gray-600">We'd love to hear from you. Reach out to us for admissions, queries, or any other information.</p>
+                        <div class="space-y-4">
+                            <p class="flex items-center"><i class="fas fa-map-marker-alt text-blue-600 w-6 mr-3"></i>321/6 Jagriti Vihar, Meerut</p>
+                            <p class="flex items-center"><i class="fas fa-phone-alt text-blue-600 w-6 mr-3"></i>0121-2766549</p>
+                            <p class="flex items-center"><i class="fas fa-envelope text-blue-600 w-6 mr-3"></i>contact@littlesoldier.edu (example)</p>
+                        </div>
+                    </div>
+                    <div>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3491.565158209886!2d77.7554!3d28.999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390c644c33000001%3A0x6b4f7465352054a1!2sJagriti%20Vihar%2C%20Meerut%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1672543200000" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="rounded-xl shadow-lg"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2024 Little Soldier Jr. High School. All Rights Reserved.</p>
+            <div class="mt-4">
+                <a href="#" class="text-gray-400 hover:text-white mx-2"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white mx-2"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white mx-2"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // --- Firebase Configuration ---
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : { apiKey: "dummy-key" };
+        
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        let db, auth;
+        let userId = null;
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            setLogLevel('debug');
+
+            onAuthStateChanged(auth, user => {
+                if (user) {
+                    console.log("User is signed in:", user.uid);
+                    userId = user.uid;
+                    loadAlumni(); 
+                } else {
+                    console.log("User is signed out.");
+                    userId = null;
+                }
+            });
+
+            const authenticate = async () => {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                     console.error("Authentication failed:", error);
+                }
+            };
+            authenticate();
+
+        } catch (error) {
+            console.error("Firebase initialization failed. Please check your config.", error);
+            const alumniList = document.getElementById('alumni-list');
+            if (alumniList) {
+                alumniList.innerHTML = `<p class="text-center text-red-500">Alumni system is currently unavailable. Please check Firebase configuration.</p>`;
+            }
+            const submitButton = document.getElementById('alumni-form').querySelector('button');
+            if(submitButton) {
+                submitButton.disabled = true;
+            }
+        }
+
+        // --- Alumni System Logic ---
+        const alumniForm = document.getElementById('alumni-form');
+        const formMessage = document.getElementById('form-message');
+
+        alumniForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!auth.currentUser) {
+                formMessage.textContent = 'Please wait, authenticating...';
+                formMessage.className = 'mt-4 text-center text-orange-500';
+                return;
+            }
+
+            formMessage.textContent = 'Submitting...';
+            formMessage.className = 'mt-4 text-center text-blue-600';
+
+            const name = document.getElementById('alumni-name').value;
+            const batch = document.getElementById('alumni-batch').value;
+            const email = document.getElementById('alumni-email').value;
+            const phone = document.getElementById('alumni-phone').value;
+
+            try {
+                const alumniCollection = collection(db, `artifacts/${appId}/public/data/alumni`);
+                await addDoc(alumniCollection, {
+                    name: name,
+                    batch: parseInt(batch),
+                    email: email,
+                    phone: phone,
+                    registeredAt: new Date()
+                });
+
+                formMessage.textContent = 'Registration successful! Thank you for joining.';
+                formMessage.className = 'mt-4 text-center text-green-600';
+                alumniForm.reset();
+                loadAlumni(); 
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                formMessage.textContent = 'Registration failed. Please try again.';
+                formMessage.className = 'mt-4 text-center text-red-600';
+            }
+        });
+
+        async function loadAlumni() {
+            if (!db || !auth.currentUser) {
+                console.log("Firestore or user not ready, skipping loadAlumni.");
+                return;
+            }
+            const alumniList = document.getElementById('alumni-list');
+            alumniList.innerHTML = '<p class="text-center text-gray-500">Loading alumni members...</p>';
+            
+            try {
+                const alumniCollection = collection(db, `artifacts/${appId}/public/data/alumni`);
+                const querySnapshot = await getDocs(alumniCollection);
+                let alumniHTML = '';
+                
+                if (querySnapshot.empty) {
+                    alumniList.innerHTML = '<p class="text-center text-gray-500">No alumni have registered yet. Be the first!</p>';
+                    return;
+                }
+
+                const alumniData = [];
+                querySnapshot.forEach(doc => alumniData.push(doc.data()));
+                
+                alumniData.sort((a, b) => b.batch - a.batch);
+
+                alumniData.forEach(alumnus => {
+                    alumniHTML += `
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                                <p class="font-bold text-gray-800">${alumnus.name}</p>
+                                <p class="text-sm text-gray-500">Batch of ${alumnus.batch}</p>
+                            </div>
+                            <i class="fas fa-user-check text-green-500"></i>
+                        </div>
+                    `;
+                });
+                alumniList.innerHTML = alumniHTML;
+            } catch (error) {
+                console.error("Error fetching alumni:", error);
+                alumniList.innerHTML = '<p class="text-center text-red-500">Could not load alumni data.</p>';
+            }
+        }
+
+        // --- UI Logic: Alumni Tabs ---
+        const registerTab = document.getElementById('register-tab');
+        const reconnectTab = document.getElementById('reconnect-tab');
+        const registerView = document.getElementById('register-view');
+        const reconnectView = document.getElementById('reconnect-view');
+
+        registerTab.addEventListener('click', () => {
+            registerView.classList.remove('hidden');
+            reconnectView.classList.add('hidden');
+            registerTab.classList.add('border-blue-600', 'text-blue-600');
+            reconnectTab.classList.remove('border-blue-600', 'text-blue-600');
+        });
+
+        reconnectTab.addEventListener('click', () => {
+            reconnectView.classList.remove('hidden');
+            registerView.classList.add('hidden');
+            reconnectTab.classList.add('border-blue-600', 'text-blue-600');
+            registerTab.classList.remove('border-blue-600', 'text-blue-600');
+            loadAlumni();
+        });
+
+    </script>
+    
+    <script>
+        // --- UI Logic: Mobile Menu & Gallery Lightbox ---
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Mobile Menu Toggle
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Close mobile menu on link click
+            document.querySelectorAll('#mobile-menu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            // Gallery & Lightbox
+            const galleryGrid = document.getElementById('gallery-grid');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const lightboxClose = document.getElementById('lightbox-close');
+            
+            const imageUrls = [
+                'https://placehold.co/600x400/a2d2ff/333333?text=Annual+Day',
+                'https://placehold.co/600x400/ffafcc/333333?text=Sports+Meet',
+                'https://placehold.co/600x400/bde0fe/333333?text=Classroom',
+                'https://placehold.co/600x400/ffc8dd/333333?text=Science+Fair',
+                'https://placehold.co/600x400/cdb4db/333333?text=Library',
+                'https://placehold.co/600x400/a2d2ff/333333?text=Art+Competition',
+                'https://placehold.co/600x400/ffafcc/333333?text=Playground',
+                'https://placehold.co/600x400/bde0fe/333333?text=Graduation',
+            ];
+
+            imageUrls.forEach(url => {
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'overflow-hidden rounded-lg shadow-md cursor-pointer';
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = 'School Event Photo';
+                img.className = 'w-full h-full object-cover transform hover:scale-110 transition-transform duration-300';
+                imgContainer.appendChild(img);
+                galleryGrid.appendChild(imgContainer);
+
+                img.addEventListener('click', () => {
+                    lightbox.style.display = 'flex';
+                    lightboxImg.src = url;
+                });
+            });
+
+            lightboxClose.addEventListener('click', () => {
+                lightbox.style.display = 'none';
+            });
+            
+            lightbox.addEventListener('click', (e) => {
+                if(e.target === lightbox) {
+                     lightbox.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
