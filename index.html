@@ -233,194 +233,108 @@
     </footer>
 
 
-  <!-- Firebase SDKs -->
+<!-- Firebase SDK -->
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-    // --- Firebase Configuration ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyBMZckXcAqYLnpGfWqtAlYNoOXaJiZ5yPU",
-      authDomain: "littlesoldieralumni.firebaseapp.com",
-      projectId: "littlesoldieralumni",
-      storageBucket: "littlesoldieralumni.firebasestorage.app",
-      messagingSenderId: "453560314576",
-      appId: "1:453560314576:web:9d9312505a4d6ef2748cd5"
-    };
+// --- Firebase Config ---
+const firebaseConfig = {
+  apiKey: "AIzaSyBMZckXcAqYLnpGfWqtAlYNoOXaJiZ5yPU",
+  authDomain: "littlesoldieralumni.firebaseapp.com",
+  projectId: "littlesoldieralumni",
+  storageBucket: "littlesoldieralumni.firebasestorage.app",
+  messagingSenderId: "453560314576",
+  appId: "1:453560314576:web:9d9312505a4d6ef2748cd5"
+};
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-    // Sign in anonymously (required for Firestore access)
-    signInAnonymously(auth).catch(console.error);
+signInAnonymously(auth).catch(console.error);
 
-    let userId = null;
+let userId = null;
+onAuthStateChanged(auth, user => {
+  if(user){
+    userId = user.uid;
+    loadAlumni();
+  }
+});
 
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            userId = user.uid;
-            loadAlumni(); // Load alumni once authenticated
-        }
-    });
+const alumniForm = document.getElementById('alumni-form');
+const formMessage = document.getElementById('form-message');
 
-    // --- Alumni Registration ---
-    const alumniForm = document.getElementById('alumni-form');
-    const formMessage = document.getElementById('form-message');
+alumniForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  if(!auth.currentUser){
+    formMessage.textContent = 'Please wait, authenticating...';
+    formMessage.className = 'mt-4 text-center text-orange-500';
+    return;
+  }
+  const name = document.getElementById('alumni-name').value;
+  const batch = document.getElementById('alumni-batch').value;
+  const email = document.getElementById('alumni-email').value;
+  const phone = document.getElementById('alumni-phone').value;
+  try {
+    await addDoc(collection(db,'alumni'), { name, batch: parseInt(batch), email, phone, registeredAt: new Date() });
+    formMessage.textContent = 'Registration successful! Thank you for joining.';
+    formMessage.className = 'mt-4 text-center text-green-600';
+    alumniForm.reset();
+    loadAlumni();
+  } catch(e){ 
+    console.error(e);
+    formMessage.textContent = 'Registration failed. Please try again.';
+    formMessage.className = 'mt-4 text-center text-red-600';
+  }
+});
 
-    alumniForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        if (!auth.currentUser) {
-            formMessage.textContent = 'Please wait, authenticating...';
-            formMessage.className = 'mt-4 text-center text-orange-500';
-            return;
-        }
-
-        const name = document.getElementById('alumni-name').value;
-        const batch = document.getElementById('alumni-batch').value;
-        const email = document.getElementById('alumni-email').value;
-        const phone = document.getElementById('alumni-phone').value;
-
-        try {
-            const alumniCollection = collection(db, 'alumni'); // Firestore collection
-            await addDoc(alumniCollection, {
-                name: name,
-                batch: parseInt(batch),
-                email: email,
-                phone: phone,
-                registeredAt: new Date()
-            });
-
-            formMessage.textContent = 'Registration successful! Thank you for joining.';
-            formMessage.className = 'mt-4 text-center text-green-600';
-            alumniForm.reset();
-            loadAlumni();
-        } catch (error) {
-            console.error("Error adding document:", error);
-            formMessage.textContent = 'Registration failed. Please try again.';
-            formMessage.className = 'mt-4 text-center text-red-600';
-        }
-    });
-
-    // --- Load Alumni ---
-    async function loadAlumni() {
-        const alumniList = document.getElementById('alumni-list');
-        alumniList.innerHTML = '<p class="text-center text-gray-500">Loading alumni members...</p>';
-
-        try {
-            const alumniCollection = collection(db, 'alumni');
-            const snapshot = await getDocs(alumniCollection);
-            if (snapshot.empty) {
-                alumniList.innerHTML = '<p class="text-center text-gray-500">No alumni have registered yet.</p>';
-                return;
-            }
-
-            const alumniData = [];
-            snapshot.forEach(doc => alumniData.push(doc.data()));
-            alumniData.sort((a, b) => b.batch - a.batch);
-
-            alumniList.innerHTML = alumniData.map(alumnus => `
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div>
-                        <p class="font-bold text-gray-800">${alumnus.name}</p>
-                        <p class="text-sm text-gray-500">Batch of ${alumnus.batch}</p>
-                    </div>
-                    <i class="fas fa-user-check text-green-500"></i>
-                </div>
-            `).join('');
-        } catch (error) {
-            console.error("Error fetching alumni:", error);
-            alumniList.innerHTML = '<p class="text-center text-red-500">Could not load alumni data.</p>';
-        }
+async function loadAlumni(){
+  const alumniList = document.getElementById('alumni-list');
+  alumniList.innerHTML = '<p class="text-center text-gray-500">Loading alumni members...</p>';
+  try {
+    const snapshot = await getDocs(collection(db,'alumni'));
+    if(snapshot.empty){
+      alumniList.innerHTML = '<p class="text-center text-gray-500">No alumni have registered yet.</p>';
+      return;
     }
+    const alumniData = [];
+    snapshot.forEach(doc => alumniData.push(doc.data()));
+    alumniData.sort((a,b) => b.batch - a.batch);
+    alumniList.innerHTML = alumniData.map(alumnus => `
+      <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+        <div>
+          <p class="font-bold text-gray-800">${alumnus.name}</p>
+          <p class="text-sm text-gray-500">Batch of ${alumnus.batch}</p>
+        </div>
+        <i class="fas fa-user-check text-green-500"></i>
+      </div>`).join('');
+  } catch(e){ 
+    console.error(e);
+    alumniList.innerHTML = '<p class="text-center text-red-500">Could not load alumni data.</p>';
+  }
+}
 
-    // --- Tabs UI ---
-    const registerTab = document.getElementById('register-tab');
-    const reconnectTab = document.getElementById('reconnect-tab');
-    const registerView = document.getElementById('register-view');
-    const reconnectView = document.getElementById('reconnect-view');
+// --- Tabs UI ---
+const registerTab = document.getElementById('register-tab');
+const reconnectTab = document.getElementById('reconnect-tab');
+const registerView = document.getElementById('register-view');
+const reconnectView = document.getElementById('reconnect-view');
 
-    registerTab.addEventListener('click', () => {
-        registerView.classList.remove('hidden');
-        reconnectView.classList.add('hidden');
-        registerTab.classList.add('border-blue-600','text-blue-600');
-        reconnectTab.classList.remove('border-blue-600','text-blue-600');
-    });
-
-    reconnectTab.addEventListener('click', () => {
-        reconnectView.classList.remove('hidden');
-        registerView.classList.add('hidden');
-        reconnectTab.classList.add('border-blue-600','text-blue-600');
-        registerTab.classList.remove('border-blue-600','text-blue-600');
-        loadAlumni();
-    });
+registerTab.addEventListener('click',()=>{
+  registerView.classList.remove('hidden');
+  reconnectView.classList.add('hidden');
+  registerTab.classList.add('border-blue-600','text-blue-600');
+  reconnectTab.classList.remove('border-blue-600','text-blue-600');
+});
+reconnectTab.addEventListener('click',()=>{
+  reconnectView.classList.remove('hidden');
+  registerView.classList.add('hidden');
+  reconnectTab.classList.add('border-blue-600','text-blue-600');
+  registerTab.classList.remove('border-blue-600','text-blue-600');
+  loadAlumni();
+});
 </script>
-
-    
-    <script>
-        // --- UI Logic: Mobile Menu & Gallery Lightbox ---
-        document.addEventListener('DOMContentLoaded', function() {
-            
-            // Mobile Menu Toggle
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-
-            // Close mobile menu on link click
-            document.querySelectorAll('#mobile-menu a').forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileMenu.classList.add('hidden');
-                });
-            });
-
-            // Gallery & Lightbox
-            const galleryGrid = document.getElementById('gallery-grid');
-            const lightbox = document.getElementById('lightbox');
-            const lightboxImg = document.getElementById('lightbox-img');
-            const lightboxClose = document.getElementById('lightbox-close');
-            
-            const imageUrls = [
-                'https://placehold.co/600x400/a2d2ff/333333?text=Annual+Day',
-                'https://placehold.co/600x400/ffafcc/333333?text=Sports+Meet',
-                'https://placehold.co/600x400/bde0fe/333333?text=Classroom',
-                'https://placehold.co/600x400/ffc8dd/333333?text=Science+Fair',
-                'https://placehold.co/600x400/cdb4db/333333?text=Library',
-                'https://placehold.co/600x400/a2d2ff/333333?text=Art+Competition',
-                'https://placehold.co/600x400/ffafcc/333333?text=Playground',
-                'https://placehold.co/600x400/bde0fe/333333?text=Graduation',
-            ];
-
-            imageUrls.forEach(url => {
-                const imgContainer = document.createElement('div');
-                imgContainer.className = 'overflow-hidden rounded-lg shadow-md cursor-pointer';
-                const img = document.createElement('img');
-                img.src = url;
-                img.alt = 'School Event Photo';
-                img.className = 'w-full h-full object-cover transform hover:scale-110 transition-transform duration-300';
-                imgContainer.appendChild(img);
-                galleryGrid.appendChild(imgContainer);
-
-                img.addEventListener('click', () => {
-                    lightbox.style.display = 'flex';
-                    lightboxImg.src = url;
-                });
-            });
-
-            lightboxClose.addEventListener('click', () => {
-                lightbox.style.display = 'none';
-            });
-            
-            lightbox.addEventListener('click', (e) => {
-                if(e.target === lightbox) {
-                     lightbox.style.display = 'none';
-                }
-            });
-        });
-    </script>
 </body>
 </html>
-
