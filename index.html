@@ -23,7 +23,7 @@
             background-color: #F8F9FA;
         }
         .hero-bg {
-            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://placehold.co/1920x1080/a2d2ff/ffffff?text=School+Campus');
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('gallery/header.heic');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -32,9 +32,63 @@
             font-weight: 800;
             color: #1A3A6D;
         }
+/* Base nav link style */
         .nav-link {
-            @apply px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors duration-300;
-        }
+  position: relative;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  color: #374151; /* gray-700 */
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+/* Hover text color */
+.nav-link:hover {
+  color: #2563eb; /* blue-600 */
+}
+
+/* Underline animation (desktop) */
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(90deg, #2563eb, #9333ea); /* blue → purple */
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Active state (optional) */
+.nav-link.active {
+  color: #2563eb;
+}
+
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* Mobile: highlight effect instead of underline */
+@media (max-width: 768px) {
+  .nav-link {
+    display: block;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    color: #374151;
+  }
+  .nav-link::after {
+    display: none; /* remove underline on mobile */
+  }
+  .nav-link:hover {
+    background: linear-gradient(90deg, #2563eb1a, #9333ea1a); /* subtle bg */
+    color: #2563eb;
+  }
+}
+
         .card {
             @apply bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300;
         }
