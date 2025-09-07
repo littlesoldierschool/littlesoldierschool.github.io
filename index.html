@@ -233,169 +233,131 @@
     </footer>
 
 
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+  <!-- Firebase SDKs -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // --- Firebase Configuration ---
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-            ? JSON.parse(__firebase_config) 
-            : { apiKey: "dummy-key" };
-        
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    // --- Firebase Configuration ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyBMZckXcAqYLnpGfWqtAlYNoOXaJiZ5yPU",
+      authDomain: "littlesoldieralumni.firebaseapp.com",
+      projectId: "littlesoldieralumni",
+      storageBucket: "littlesoldieralumni.firebasestorage.app",
+      messagingSenderId: "453560314576",
+      appId: "1:453560314576:web:9d9312505a4d6ef2748cd5"
+    };
 
-        let db, auth;
-        let userId = null;
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Sign in anonymously (required for Firestore access)
+    signInAnonymously(auth).catch(console.error);
+
+    let userId = null;
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            userId = user.uid;
+            loadAlumni(); // Load alumni once authenticated
+        }
+    });
+
+    // --- Alumni Registration ---
+    const alumniForm = document.getElementById('alumni-form');
+    const formMessage = document.getElementById('form-message');
+
+    alumniForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!auth.currentUser) {
+            formMessage.textContent = 'Please wait, authenticating...';
+            formMessage.className = 'mt-4 text-center text-orange-500';
+            return;
+        }
+
+        const name = document.getElementById('alumni-name').value;
+        const batch = document.getElementById('alumni-batch').value;
+        const email = document.getElementById('alumni-email').value;
+        const phone = document.getElementById('alumni-phone').value;
 
         try {
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            setLogLevel('debug');
-
-            onAuthStateChanged(auth, user => {
-                if (user) {
-                    console.log("User is signed in:", user.uid);
-                    userId = user.uid;
-                    loadAlumni(); 
-                } else {
-                    console.log("User is signed out.");
-                    userId = null;
-                }
+            const alumniCollection = collection(db, 'alumni'); // Firestore collection
+            await addDoc(alumniCollection, {
+                name: name,
+                batch: parseInt(batch),
+                email: email,
+                phone: phone,
+                registeredAt: new Date()
             });
 
-            const authenticate = async () => {
-                try {
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
-                } catch (error) {
-                     console.error("Authentication failed:", error);
-                }
-            };
-            authenticate();
-
-        } catch (error) {
-            console.error("Firebase initialization failed. Please check your config.", error);
-            const alumniList = document.getElementById('alumni-list');
-            if (alumniList) {
-                alumniList.innerHTML = `<p class="text-center text-red-500">Alumni system is currently unavailable. Please check Firebase configuration.</p>`;
-            }
-            const submitButton = document.getElementById('alumni-form').querySelector('button');
-            if(submitButton) {
-                submitButton.disabled = true;
-            }
-        }
-
-        // --- Alumni System Logic ---
-        const alumniForm = document.getElementById('alumni-form');
-        const formMessage = document.getElementById('form-message');
-
-        alumniForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            if (!auth.currentUser) {
-                formMessage.textContent = 'Please wait, authenticating...';
-                formMessage.className = 'mt-4 text-center text-orange-500';
-                return;
-            }
-
-            formMessage.textContent = 'Submitting...';
-            formMessage.className = 'mt-4 text-center text-blue-600';
-
-            const name = document.getElementById('alumni-name').value;
-            const batch = document.getElementById('alumni-batch').value;
-            const email = document.getElementById('alumni-email').value;
-            const phone = document.getElementById('alumni-phone').value;
-
-            try {
-                const alumniCollection = collection(db, `artifacts/${appId}/public/data/alumni`);
-                await addDoc(alumniCollection, {
-                    name: name,
-                    batch: parseInt(batch),
-                    email: email,
-                    phone: phone,
-                    registeredAt: new Date()
-                });
-
-                formMessage.textContent = 'Registration successful! Thank you for joining.';
-                formMessage.className = 'mt-4 text-center text-green-600';
-                alumniForm.reset();
-                loadAlumni(); 
-            } catch (error) {
-                console.error("Error adding document: ", error);
-                formMessage.textContent = 'Registration failed. Please try again.';
-                formMessage.className = 'mt-4 text-center text-red-600';
-            }
-        });
-
-        async function loadAlumni() {
-            if (!db || !auth.currentUser) {
-                console.log("Firestore or user not ready, skipping loadAlumni.");
-                return;
-            }
-            const alumniList = document.getElementById('alumni-list');
-            alumniList.innerHTML = '<p class="text-center text-gray-500">Loading alumni members...</p>';
-            
-            try {
-                const alumniCollection = collection(db, `artifacts/${appId}/public/data/alumni`);
-                const querySnapshot = await getDocs(alumniCollection);
-                let alumniHTML = '';
-                
-                if (querySnapshot.empty) {
-                    alumniList.innerHTML = '<p class="text-center text-gray-500">No alumni have registered yet. Be the first!</p>';
-                    return;
-                }
-
-                const alumniData = [];
-                querySnapshot.forEach(doc => alumniData.push(doc.data()));
-                
-                alumniData.sort((a, b) => b.batch - a.batch);
-
-                alumniData.forEach(alumnus => {
-                    alumniHTML += `
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div>
-                                <p class="font-bold text-gray-800">${alumnus.name}</p>
-                                <p class="text-sm text-gray-500">Batch of ${alumnus.batch}</p>
-                            </div>
-                            <i class="fas fa-user-check text-green-500"></i>
-                        </div>
-                    `;
-                });
-                alumniList.innerHTML = alumniHTML;
-            } catch (error) {
-                console.error("Error fetching alumni:", error);
-                alumniList.innerHTML = '<p class="text-center text-red-500">Could not load alumni data.</p>';
-            }
-        }
-
-        // --- UI Logic: Alumni Tabs ---
-        const registerTab = document.getElementById('register-tab');
-        const reconnectTab = document.getElementById('reconnect-tab');
-        const registerView = document.getElementById('register-view');
-        const reconnectView = document.getElementById('reconnect-view');
-
-        registerTab.addEventListener('click', () => {
-            registerView.classList.remove('hidden');
-            reconnectView.classList.add('hidden');
-            registerTab.classList.add('border-blue-600', 'text-blue-600');
-            reconnectTab.classList.remove('border-blue-600', 'text-blue-600');
-        });
-
-        reconnectTab.addEventListener('click', () => {
-            reconnectView.classList.remove('hidden');
-            registerView.classList.add('hidden');
-            reconnectTab.classList.add('border-blue-600', 'text-blue-600');
-            registerTab.classList.remove('border-blue-600', 'text-blue-600');
+            formMessage.textContent = 'Registration successful! Thank you for joining.';
+            formMessage.className = 'mt-4 text-center text-green-600';
+            alumniForm.reset();
             loadAlumni();
-        });
+        } catch (error) {
+            console.error("Error adding document:", error);
+            formMessage.textContent = 'Registration failed. Please try again.';
+            formMessage.className = 'mt-4 text-center text-red-600';
+        }
+    });
 
-    </script>
+    // --- Load Alumni ---
+    async function loadAlumni() {
+        const alumniList = document.getElementById('alumni-list');
+        alumniList.innerHTML = '<p class="text-center text-gray-500">Loading alumni members...</p>';
+
+        try {
+            const alumniCollection = collection(db, 'alumni');
+            const snapshot = await getDocs(alumniCollection);
+            if (snapshot.empty) {
+                alumniList.innerHTML = '<p class="text-center text-gray-500">No alumni have registered yet.</p>';
+                return;
+            }
+
+            const alumniData = [];
+            snapshot.forEach(doc => alumniData.push(doc.data()));
+            alumniData.sort((a, b) => b.batch - a.batch);
+
+            alumniList.innerHTML = alumniData.map(alumnus => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div>
+                        <p class="font-bold text-gray-800">${alumnus.name}</p>
+                        <p class="text-sm text-gray-500">Batch of ${alumnus.batch}</p>
+                    </div>
+                    <i class="fas fa-user-check text-green-500"></i>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error("Error fetching alumni:", error);
+            alumniList.innerHTML = '<p class="text-center text-red-500">Could not load alumni data.</p>';
+        }
+    }
+
+    // --- Tabs UI ---
+    const registerTab = document.getElementById('register-tab');
+    const reconnectTab = document.getElementById('reconnect-tab');
+    const registerView = document.getElementById('register-view');
+    const reconnectView = document.getElementById('reconnect-view');
+
+    registerTab.addEventListener('click', () => {
+        registerView.classList.remove('hidden');
+        reconnectView.classList.add('hidden');
+        registerTab.classList.add('border-blue-600','text-blue-600');
+        reconnectTab.classList.remove('border-blue-600','text-blue-600');
+    });
+
+    reconnectTab.addEventListener('click', () => {
+        reconnectView.classList.remove('hidden');
+        registerView.classList.add('hidden');
+        reconnectTab.classList.add('border-blue-600','text-blue-600');
+        registerTab.classList.remove('border-blue-600','text-blue-600');
+        loadAlumni();
+    });
+</script>
+
     
     <script>
         // --- UI Logic: Mobile Menu & Gallery Lightbox ---
